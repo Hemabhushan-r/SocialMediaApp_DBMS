@@ -1,0 +1,35 @@
+message
+/message/addmessage { email, receiverprofileid, message }
+/message/removemessage { messageid }
+/message/getallchats { email }
+/message/getchat { email, chatwithprofileid }
+post
+/post/createphoto { caption, email, link }
+/post/createvideo { caption, email, link }
+/post/delphoto { postid }
+/post/delvideo { postid }
+/post/reactphoto { postid, email, reactiontype }
+/post/reactvideo { postid, email, reactiontype }
+/post/removereact { reactionid }
+/post/updatephoto { postid, caption, link }
+/post/updatevideo { postid, caption, link }
+socialnet
+/socialnet/follow { followerprofileid, followedprofileid }
+/socialnet/unfollow { followerprofileid, followedprofileid }
+user
+/user/signin { email, password }
+{
+    "email": "hemabhushanr134@gmail.com",
+    "password": "test2"
+}
+/user/signup { firstname, lastname, email, password, confirmpassword, dob, gender }
+{
+    "firstname":"Hemabhushan",
+    "lastname":"R",
+    "email":"hemabhushanr1234@gmail.com",
+    "password":"test",
+    "confirmpassword":"test",
+    "dob":"2003-11-15",
+    "gender":"Male"
+}
+

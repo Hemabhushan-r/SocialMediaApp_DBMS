@@ -1,0 +1,2 @@
+ mysql> GRANT ALL ON fooDatabase.* TO fooUser@'1.2.3.4' IDENTIFIED BY 'my_password';#Here use another ip address
+ mysql -u fooUser -p -h 44.55.66.77 #Server Address
