@@ -58,7 +58,7 @@ const retrieveMessagesWithProfile = async (req, res) => {
   try {
     //connection.connect();
     const messageRes = await query(
-      "SELECT m.messageid,m.Message,m.mes_timestamp,p.FirstName,p.LastName FROM message m INNER JOIN profile p ON p.profileid=m.senderprofileid WHERE (m.senderprofileid = ? AND m.receiverprofileid = (SELECT profileid FROM user_auth u WHERE u.email = ?)) OR (m.senderprofileid = (SELECT profileid FROM user_auth u WHERE u.email = ?) AND m.receiverprofileid = ?) ORDER BY m.mes_timestamp GROUP BY p.FirstName,m.Message,m.mes_timestamp",
+      "SELECT m.senderprofileid,m.messageid,m.Message,m.mes_timestamp,p.FirstName,p.LastName FROM message m INNER JOIN profile p ON p.profileid=m.senderprofileid WHERE (m.senderprofileid = ? AND m.receiverprofileid = (SELECT profileid FROM user_auth u WHERE u.email = ?)) OR (m.senderprofileid = (SELECT profileid FROM user_auth u WHERE u.email = ?) AND m.receiverprofileid = ?) ORDER BY m.mes_timestamp GROUP BY p.FirstName,m.Message,m.mes_timestamp",
       [chatwithprofileid, email, email, chatwithprofileid]
     );
     res.status(200).json({ messages: messageRes });

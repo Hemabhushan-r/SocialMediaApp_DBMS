@@ -92,6 +92,20 @@ const viewProfile = async (req, res) => {
   }
 };
 
+const viewProfileByProfileId = async (req, res) => {
+  const { profileid } = req.body;
+  try {
+    //connection.connect();
+    const profileRes = await query("SELECT * FROM profile WHERE profileid=?", [
+      profileid,
+    ]);
+    res.status(200).json({ ...profileRes[0] });
+    //connection.end();
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
 const editProfile = async (req, res) => {
   const {
     email,
@@ -164,16 +178,36 @@ const viewOwnPosts = async (req, res) => {
 };
 
 const searchPeople = async (req, res) => {
-  const { search } = req.body;
+  let { search } = req.body;
   try {
     //connection.connect();
     search = "%" + search + "%";
     const searchRes = await query(
-      "SELECT * profile WHERE firstname like ? or lastname like ?",
-      [search]
+      "SELECT * FROM profile WHERE (firstname like ?) OR (lastname like ?)",
+      [search, search]
     );
-    res.status(200).json({ searchRes: searchRes });
+    let data;
+    if (search != "%%") {
+      data = { searchRes: searchRes };
+    } else {
+      data = { searchRes: [] };
+    }
+    res.status(200).json(data);
     //connection.end();
+  } catch (err) {
+    throw new Error(err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+const getUserFollowerStatus = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const statusRes = await query(
+      "SELECt * FROM userstatus WHERE profileid=(SELECT followedprofileid FROM follower WHERE followerprofileid=(SELECT profileid FROM user_auth WHERE email=?))",
+      [email]
+    );
+    res.status(200).json({ statusRes: statusRes });
   } catch (err) {
     res.status(500).json({ message: "Something went wrong" });
   }
@@ -184,6 +218,7 @@ exports.signIn = signIn;
 exports.signUp = signUp;
 
 exports.viewProfile = viewProfile;
+exports.viewProfileByProfileId = viewProfileByProfileId;
 
 exports.editProfile = editProfile;
 
@@ -192,3 +227,5 @@ exports.viewFeed = viewFeed;
 exports.viewOwnPosts = viewOwnPosts;
 
 exports.searchPeople = searchPeople;
+
+exports.getUserFollowerStatus = getUserFollowerStatus;

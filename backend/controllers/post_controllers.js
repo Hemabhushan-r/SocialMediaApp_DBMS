@@ -52,6 +52,30 @@ const deletePhotoPost = async (req, res) => {
   }
 };
 
+const getPhotoReacts = async (req, res) => {
+  const { postid } = req.body;
+  try {
+    const reactRes = await query("SELECT * FROM photo WHERE PhotoId = ?", [
+      postid,
+    ]);
+    res.status(200).json({ reactRes: reactRes });
+  } catch (err) {
+    res.status(500).json({ message: "Something Went Wrong" });
+  }
+};
+
+const getVideoReacts = async (req, res) => {
+  const { postid } = req.body;
+  try {
+    const reactRes = await query("SELECT * FROM video WHERE VideoId = ?", [
+      postid,
+    ]);
+    res.status(200).json({ reactRes: reactRes });
+  } catch (err) {
+    res.status(500).json({ message: "Something Went Wrong" });
+  }
+};
+
 const createVideoPost = async (req, res) => {
   const { caption, email, link } = req.body;
   try {
@@ -132,6 +156,20 @@ const removeReaction = async (req, res) => {
   }
 };
 
+const updateReaction = async (req, res) => {
+  const { reactionid, reactiontype } = req.body;
+  try {
+    //connection.connect();
+    const reactDelRes = await query(
+      "UPDATE reactions SET reactiontype = ? WHERE reactionid = ?",
+      [reactiontype, reactionid]
+    );
+    res.status(200).json({ message: "Reaction Updated Successfully" });
+    //connection.end();
+  } catch (err) {
+    res.status(500).json({ message: "Something Went Wrong" });
+  }
+};
 const reactToVideo = async (req, res) => {
   const { postid, email, reactiontype } = req.body;
   try {
@@ -167,3 +205,8 @@ exports.reactToPhoto = reactToPhoto;
 exports.reactToVideo = reactToVideo;
 
 exports.removeReaction = removeReaction;
+
+exports.getPhotoReacts = getPhotoReacts;
+exports.getVideoReacts = getVideoReacts;
+
+exports.updateReaction = updateReaction;
