@@ -19,6 +19,7 @@ const createPhotoPost = async (req, res) => {
     });
     //connection.end();
   } catch (err) {
+    throw new Error(err);
     res.status(500).json({ message: "Something Went Wrong" });
   }
 };
@@ -188,6 +189,23 @@ const reactToVideo = async (req, res) => {
   }
 };
 
+const reactionsCount = async (req, res) => {
+  const { id, isPhoto } = req.body;
+  try {
+    let queryStr;
+    if (isPhoto) {
+      queryStr = "SELECT total_photo_reactions(?) as reactioncount";
+    } else {
+      queryStr = "SELECT total_video_reactions(?) as reactioncount";
+    }
+    const reactionsNum = await query(queryStr, [id]);
+    res.status(200).json({ reactionsNum: reactionsNum });
+  } catch (err) {
+    res.status(500).json({ message: "Something Went Wrong" });
+    throw new Error(err);
+  }
+};
+
 exports.createPhotoPost = createPhotoPost;
 
 exports.updatePhotoPost = updatePhotoPost;
@@ -210,3 +228,5 @@ exports.getPhotoReacts = getPhotoReacts;
 exports.getVideoReacts = getVideoReacts;
 
 exports.updateReaction = updateReaction;
+
+exports.reactionsCount = reactionsCount;

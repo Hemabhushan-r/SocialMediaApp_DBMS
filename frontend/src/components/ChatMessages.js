@@ -12,6 +12,26 @@ const ChatMessages = ({
   ];
   const [messages, setMessages] = useState([]);
   const [currUserProfileId, setCurrUserProfileId] = useState("");
+
+  const retrieveMessages = async () => {
+    const email = localStorage.getItem("email");
+    try {
+      const url = "http://localhost:5000/message/getchat";
+      const data = {
+        email: email,
+        chatwithprofileid: currActiveChatProfileId,
+      };
+      const response = await axios.post(url, data);
+      //console.log(response);
+      setMessages((prev) => response?.data?.messages);
+      const url2 = "http://localhost:5000/user/viewprofile";
+      const data2 = { email: email };
+      const response2 = await axios.post(url2, data2);
+      setCurrUserProfileId((prev) => response2?.data?.profileid);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   useEffect(() => {
     (async () => {
       const email = localStorage.getItem("email");
@@ -22,6 +42,7 @@ const ChatMessages = ({
           chatwithprofileid: currActiveChatProfileId,
         };
         const response = await axios.post(url, data);
+        //console.log(response);
         setMessages((prev) => response?.data?.messages);
         const url2 = "http://localhost:5000/user/viewprofile";
         const data2 = { email: email };
@@ -31,6 +52,11 @@ const ChatMessages = ({
         console.log(err);
       }
     })();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(retrieveMessages, 1000);
+    return () => clearInterval(interval);
   }, []);
   return (
     <div className="container overflow-scroll" style={{ maxHeight: "90vh" }}>

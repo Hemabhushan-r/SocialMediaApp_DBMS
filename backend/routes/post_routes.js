@@ -13,6 +13,7 @@ const {
   getPhotoReacts,
   getVideoReacts,
   updateReaction,
+  reactionsCount,
 } = require("../controllers/post_controllers");
 
 router.post("/createphoto", createPhotoPost);
@@ -27,5 +28,6 @@ router.post("/removereact", removeReaction);
 router.post("/updatephoto", updatePhotoPost);
 router.post("/updatevideo", updateVideoPost);
 router.post("/updatereact", updateReaction);
+router.post("/getreactioncount", reactionsCount);
 
 module.exports = router;

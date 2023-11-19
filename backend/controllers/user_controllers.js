@@ -204,10 +204,49 @@ const getUserFollowerStatus = async (req, res) => {
   const { email } = req.body;
   try {
     const statusRes = await query(
-      "SELECt * FROM userstatus WHERE profileid=(SELECT followedprofileid FROM follower WHERE followerprofileid=(SELECT profileid FROM user_auth WHERE email=?))",
+      "SELECT * FROM userstatus WHERE profileid=(SELECT followedprofileid FROM follower WHERE followerprofileid=(SELECT profileid FROM user_auth WHERE email=?))",
       [email]
     );
     res.status(200).json({ statusRes: statusRes });
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+const getUnfollowedProfiles = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const profileRes = await query(
+      "SELECT * FROM profile WHERE profileid NOT IN (SELECT followedprofileid FROM follower WHERE followerprofileid=(SELECT profileid FROM user_auth WHERE email=?)) AND profileid <> (SELECT profileid FROM user_auth WHERE email=?)",
+      [email, email]
+    );
+    res.status(200).json({ profileRes: profileRes });
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+const getFollowedProfiles = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const profileRes = await query(
+      "SELECT * FROM profile WHERE profileid IN (SELECT followedprofileid FROM follower WHERE followerprofileid=(SELECT profileid FROM user_auth WHERE email=?)) AND profileid <> (SELECT profileid FROM user_auth WHERE email=?)",
+      [email, email]
+    );
+    res.status(200).json({ profileRes: profileRes });
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+const deleteAccount = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const deleteRes = await query(
+      "call delete_account((SELECT profileid FROM user_auth WHERE email=?))",
+      [email]
+    );
+    res.status(200).json({ message: "Account Deleted Successfully" });
   } catch (err) {
     res.status(500).json({ message: "Something went wrong" });
   }
@@ -229,3 +268,8 @@ exports.viewOwnPosts = viewOwnPosts;
 exports.searchPeople = searchPeople;
 
 exports.getUserFollowerStatus = getUserFollowerStatus;
+
+exports.getUnfollowedProfiles = getUnfollowedProfiles;
+exports.getFollowedProfiles = getFollowedProfiles;
+
+exports.deleteAccount = deleteAccount;

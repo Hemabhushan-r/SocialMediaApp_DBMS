@@ -18,6 +18,7 @@ const Post = ({
   const [userName, setUserName] = useState("");
   const [reactions, setReactions] = useState([]);
   const [myReactionId, setMyReactionId] = useState("");
+  const [reactionCount, setReactionCount] = useState(0);
 
   const handleReaction = async (reactionType) => {
     const email = localStorage.getItem("email");
@@ -41,8 +42,10 @@ const Post = ({
     (async () => {
       try {
         const url = "http://localhost:5000/user/viewprofilebyprofileid";
+        console.log(postedbyprofileid);
         const data = { profileid: postedbyprofileid };
         const response = await axios.post(url, data);
+        console.log(response?.data);
         setUserName(
           (prev) =>
             response?.data?.FirstName + "\t\t" + response?.data?.LastName
@@ -57,6 +60,12 @@ const Post = ({
         const data2 = { postid: postid };
         const response2 = await axios.post(url2, data2);
         setReactions((prev) => response2?.data?.reactRes);
+        const url3 = "http://localhost:5000/post/getreactioncount";
+        const data3 = { id: postid, isPhoto: isPhoto };
+        const response3 = await axios.post(url3, data3);
+        setReactionCount(
+          (prev) => response3?.data?.reactionsNum[0]?.reactioncount
+        );
       } catch (err) {
         console.log(err);
       }
@@ -73,12 +82,13 @@ const Post = ({
           />
           <div className="card-title m-2">
             {userName ? userName : username}
-            {"  "}
-            {timestamp}
+            {"\t\t on \t"}
+            {timestamp?.replace(/T/g, " ")?.replace(/Z/g, " ")}
           </div>
         </div>
         <img src={imgurl} className="card-img-top" alt="..." />
         <div className="card-body">
+          <p className="card-text">{caption}</p>
           <div>
             <div className="btn-group dropend">
               <div
@@ -147,7 +157,7 @@ const Post = ({
               </ul>
             </div>
           </div>
-          <p className="card-text">{caption}</p>
+          <div>{reactionCount}</div>
         </div>
       </div>
     </div>

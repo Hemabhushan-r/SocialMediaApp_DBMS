@@ -34,10 +34,14 @@ const Messages = () => {
           />
         </div>
         <div className="position-relative col-8 vh-100">
-          <ChatMessages
-            currActiveChatProfileId={currActiveChatProfileId}
-            setCurrActiveChatProfileId={setCurrActiveChatProfileId}
-          />
+          {currActiveChatProfileId === "" ? (
+            <></>
+          ) : (
+            <ChatMessages
+              currActiveChatProfileId={currActiveChatProfileId}
+              setCurrActiveChatProfileId={setCurrActiveChatProfileId}
+            />
+          )}
           <div className="position-absolute bottom-0 input-group my-3 shadow rounded">
             <input
               type="text"
