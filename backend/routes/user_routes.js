@@ -13,6 +13,7 @@ const {
   getUnfollowedProfiles,
   getFollowedProfiles,
   deleteAccount,
+  sendQuery,
 } = require("../controllers/user_controllers");
 
 router.post("/signin", signIn);
@@ -27,5 +28,6 @@ router.post("/getuserfollowerstatus", getUserFollowerStatus);
 router.post("/getunfollowedprofiles", getUnfollowedProfiles);
 router.post("/getfollowedprofiles", getFollowedProfiles);
 router.post("/deleteaccount", deleteAccount);
+router.post("/query", sendQuery);
 
 module.exports = router;

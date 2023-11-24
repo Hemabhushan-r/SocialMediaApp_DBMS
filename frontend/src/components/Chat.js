@@ -18,7 +18,7 @@ const Chat = ({
       className={
         isActiveChat
           ? "list-group-item active bg-secondary d-flex justify-content-between align-items-start"
-          : "list-group-item bg-secondary d-flex justify-content-between align-items-start"
+          : "list-group-item d-flex justify-content-between align-items-start"
       }
     >
       <div className="ms-1 me-auto">

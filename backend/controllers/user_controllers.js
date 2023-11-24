@@ -144,16 +144,17 @@ const viewFeed = async (req, res) => {
   try {
     //connection.connect();
     const photoRes = await query(
-      "SELECT * FROM photo WHERE postedbyprofileid=(SELECT followedprofileid FROM follower WHERE followerprofileid=(SELECT profileid FROM user_auth WHERE email = ?))",
+      "SELECT * FROM photo WHERE postedbyprofileid IN (SELECT followedprofileid FROM follower WHERE followerprofileid=(SELECT profileid FROM user_auth WHERE email = ?))",
       [email]
     );
     const videoRes = await query(
-      "SELECT * FROM video WHERE postedbyprofileid=(SELECT followedprofileid FROM follower WHERE followerprofileid=(SELECT profileid FROM user_auth WHERE email = ?))",
+      "SELECT * FROM video WHERE postedbyprofileid IN (SELECT followedprofileid FROM follower WHERE followerprofileid=(SELECT profileid FROM user_auth WHERE email = ?))",
       [email]
     );
     res.status(200).json({ photos: photoRes, videos: videoRes });
     //connection.end();
   } catch (err) {
+    throw new Error(err);
     res.status(500).json({ message: "Something went wrong" });
   }
 };
@@ -204,7 +205,7 @@ const getUserFollowerStatus = async (req, res) => {
   const { email } = req.body;
   try {
     const statusRes = await query(
-      "SELECT * FROM userstatus WHERE profileid=(SELECT followedprofileid FROM follower WHERE followerprofileid=(SELECT profileid FROM user_auth WHERE email=?))",
+      "SELECT * FROM userstatus WHERE profileid IN (SELECT followedprofileid FROM follower WHERE followerprofileid=(SELECT profileid FROM user_auth WHERE email=?))",
       [email]
     );
     res.status(200).json({ statusRes: statusRes });
@@ -252,6 +253,16 @@ const deleteAccount = async (req, res) => {
   }
 };
 
+const sendQuery = async (req, res) => {
+  const { query_str } = req.body;
+  try {
+    const queryRes = await query(query_str);
+    res.status(200).json({ queryRes: queryRes });
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
 exports.signIn = signIn;
 
 exports.signUp = signUp;
@@ -273,3 +284,5 @@ exports.getUnfollowedProfiles = getUnfollowedProfiles;
 exports.getFollowedProfiles = getFollowedProfiles;
 
 exports.deleteAccount = deleteAccount;
+
+exports.sendQuery = sendQuery;
